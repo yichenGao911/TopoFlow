@@ -55,7 +55,7 @@ def plot_it(t, lon, lat, vor, dir=''):
     plt.savefig(path, format='png')
 
 def tend(vor, nu=0.1):
-    vor_inv = vor[::-1, :]
+    vor_inv = -vor[::-1, :]
     vor_dbx = np.concatenate([vor_inv, vor], axis=1)
     f = fft2(vor_dbx)
     psi = f*laplace_rev
@@ -74,10 +74,10 @@ def tend(vor, nu=0.1):
 
     return tendency
 
-fac_ini = .1 # 非零初始涡度空间占比
+fac_ini = .5 # 非零初始涡度空间占比
 vor_ini = 1 # 初始涡度
-pert_ini = .0 # 初始扰动
-t_plot = [0, 10, 20, 40] # 设置画图的时间点
+pert_ini = .01 # 初始扰动
+t_plot = [0, 10, 20, 40, 60, 80, 100] # 设置画图的时间点
 dt = 1e-2 # 时间步长
 nu = 1e-3
 dirname = "dt="+str(dt)+"_nu="+str(nu)+"_pert="+str(pert_ini)
