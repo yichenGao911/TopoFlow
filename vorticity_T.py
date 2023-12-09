@@ -1,5 +1,4 @@
 import matplotlib.pyplot as plt
-import subprocess as sp
 from numpy.fft import fft2, ifft2
 import numpy as np
 import os
