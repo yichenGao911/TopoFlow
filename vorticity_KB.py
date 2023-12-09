@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import subprocess as sp
 from numpy.fft import fft2, ifft2
 import numpy as np
+import os
 
 num = 64
 Kmax = num//2
@@ -35,11 +36,8 @@ def ic(num, fac, intensity, pert):
 
     return vor
 
-def plot_it(t, lon, lat, vor, dir=''):
-    if (dir != ''):
-        dir += '/'
+def plot_it(t, lon, lat, vor):
     fname = "vorticity_"+str(int(t))+"_seconds_later.png"
-    path = dir+fname
     fig, ax = plt.subplots(figsize=(6,4))
 
     crange = np.linspace(-1.1, 1.1, 12)
@@ -52,7 +50,8 @@ def plot_it(t, lon, lat, vor, dir=''):
     cbar.ax.set_ylabel("vorticity")
 
     plt.tight_layout()
-    plt.savefig(path, format='png')
+    plt.savefig(fname, format='png')
+
 
 def tend(vor, nu=0.1):
     vor_inv = -vor[::-1, :]
@@ -77,10 +76,14 @@ def tend(vor, nu=0.1):
 fac_ini = .5 # 非零初始涡度空间占比
 vor_ini = 1 # 初始涡度
 pert_ini = .01 # 初始扰动
-t_plot = [0, 10, 20, 40, 60, 80, 100] # 设置画图的时间点
+t_plot = [0, 10, 20, 40, 45, 50, 55, 60, 70, 80] # 设置画图的时间点
 dt = 1e-2 # 时间步长
 nu = 1e-3
-dirname = "KB/dt="+str(dt)+"_nu="+str(nu)+"_pert="+str(pert_ini)
+os.chdir('KB')
+dirname = "dt="+str(dt)+"_nu="+str(nu)+"_pert="+str(pert_ini)
+if (dirname not in os.listdir()):
+    os.mkdir(dirname)
+os.chdir(dirname)
 # dirname = ''
 N = int(max(t_plot)/dt)
 
@@ -91,19 +94,19 @@ vor = ic(num, fac_ini, vor_ini, pert_ini)
 # u, test=tend(vor)
 # plt.contourf(lon, lat, test, cmap="bwr")
 # plt.colorbar()
-if (dirname != ''):
-    sp.run(['mkdir', dirname])
 
 if 0 in t_plot:
-    plot_it(0, lon, lat, vor, dir=dirname)
+    plot_it(0, lon, lat, vor)
 
 for i in range(N):
     vor = rk4(vor, dt, tend, nu)
     t = dt*(i+1)
     # print(t, t_plot)
     if t in t_plot:
-        plot_it(t, lon, lat, vor, dir=dirname)
+        plot_it(t, lon, lat, vor)
 
+os.chdir('..')
+os.chdir('..')
 plt.show()
 
 
