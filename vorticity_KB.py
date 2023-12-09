@@ -78,6 +78,8 @@ pert_ini = .01 # 初始扰动
 t_plot = [0, 10, 20, 40, 45, 50, 55, 60, 70, 80] # 设置画图的时间点
 dt = 1e-2 # 时间步长
 nu = 1e-3
+if ('KB' not in os.listdir()):
+    os.mkdir('KB')
 os.chdir('KB')
 dirname = "dt="+str(dt)+"_nu="+str(nu)+"_pert="+str(pert_ini)
 if (dirname not in os.listdir()):
