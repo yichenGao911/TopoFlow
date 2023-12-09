@@ -6,6 +6,6 @@ A course project
 - make cool animations
 
 ## progress
-- vorticity equation on a Torus
-- vortictiy equation on a Klein Bottle
-- vortictiy equation on a Projective Plane
+- vorticity equation on a Torus ("T")
+- vortictiy equation on a Klein Bottle ("KB")
+- vortictiy equation on a Projective Plane ("PP")
