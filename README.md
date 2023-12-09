@@ -8,3 +8,4 @@ A course project
 ## progress
 - vorticity equation on a Torus
 - vorticty equation on a Klein Bottle
+- vorticty equation on a Prejective Plane
