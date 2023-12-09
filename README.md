@@ -7,5 +7,5 @@ A course project
 
 ## progress
 - vorticity equation on a Torus
-- vorticty equation on a Klein Bottle
-- vorticty equation on a Prejective Plane
+- vortictiy equation on a Klein Bottle
+- vortictiy equation on a Projective Plane

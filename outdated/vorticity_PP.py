@@ -85,7 +85,7 @@ nu = 1e-3
 if ('PP' not in os.listdir()):
     os.mkdir('PP')
 os.chdir('PP')
-dirname = "dt="+str(dt)+"_nu="+str(nu)+"_pert="+str(pert_ini)
+dirname = "fac="+str(fac_ini)+"_dt="+str(dt)+"_nu="+str(nu)+"_pert="+str(pert_ini)
 if (dirname not in os.listdir()):
     os.mkdir(dirname)
 os.chdir(dirname)

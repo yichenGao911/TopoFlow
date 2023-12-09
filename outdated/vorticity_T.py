@@ -3,13 +3,11 @@ from numpy.fft import fft2, ifft2
 import numpy as np
 import os
 
-num = 64
+num = 128
 Kmax = num//2
-Jmax = num
 jj = (0+1j)
 ks = np.append(np.linspace(0, Kmax, Kmax+1), -np.linspace(Kmax-1, 1, Kmax-1))
-js = np.append(np.linspace(0, Jmax, Jmax+1), -np.linspace(Jmax-1, 1, Jmax-1))
-kjs = np.array(np.meshgrid(js, ks))
+kjs = np.array(np.meshgrid(ks, ks))
 laplace = -(kjs[1]**2+kjs[0]**2)
 laplace_0 = laplace.copy()
 laplace_0[np.where(laplace_0==0)] = 1e9 # 消除0值
@@ -51,11 +49,8 @@ def plot_it(t, lon, lat, vor):
     plt.tight_layout()
     plt.savefig(fname, format='png')
 
-
 def tend(vor, nu=0.1):
-    vor_inv = -vor[::-1, :]
-    vor_dbx = np.concatenate([vor_inv, vor], axis=1)
-    f = fft2(vor_dbx)
+    f = fft2(vor)
     psi = f*laplace_rev
     fu = -psi*jj*kjs[1]
     fv = psi*jj*kjs[0]
@@ -68,20 +63,19 @@ def tend(vor, nu=0.1):
 
     # print(np.max(pvpx), np.max(pvpy), np.max(Lv))
     tendency = -u*pvpx - v*pvpy + nu*Lv
-    tendency = tendency[:, num:]
 
     return tendency
 
-fac_ini = .5 # 非零初始涡度空间占比
+fac_ini = .2 # 非零初始涡度空间占比
 vor_ini = 1 # 初始涡度
 pert_ini = .01 # 初始扰动
-t_plot = [0, 10, 20, 40, 45, 50, 55, 60, 70, 80] # 设置画图的时间点
+t_plot = [0, 10, 20, 30, 40, 50, 60, 70, 80] # 设置画图的时间点
 dt = 1e-2 # 时间步长
 nu = 1e-3
-if ('KB' not in os.listdir()):
-    os.mkdir('KB')
-os.chdir('KB')
-dirname = "dt="+str(dt)+"_nu="+str(nu)+"_pert="+str(pert_ini)
+if ('Torus' not in os.listdir()):
+    os.mkdir('Torus')
+os.chdir('Torus')
+dirname = "fac="+str(fac_ini)+"_dt="+str(dt)+"_nu="+str(nu)+"_pert="+str(pert_ini)
 if (dirname not in os.listdir()):
     os.mkdir(dirname)
 os.chdir(dirname)
