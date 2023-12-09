@@ -80,8 +80,8 @@ pert_ini = .01 # 初始扰动
 t_plot = [0, 10, 20, 40, 60, 80, 100] # 设置画图的时间点
 dt = 1e-2 # 时间步长
 nu = 1e-3
-dirname = "dt="+str(dt)+"_nu="+str(nu)+"_pert="+str(pert_ini)
-dirname = ''
+dirname = "KB/dt="+str(dt)+"_nu="+str(nu)+"_pert="+str(pert_ini)
+# dirname = ''
 N = int(max(t_plot)/dt)
 
 lon = np.delete(np.linspace(0, 2*np.pi, num+1), -1)
