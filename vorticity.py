@@ -131,6 +131,8 @@ class Surf:
             # print(t, t_plot)
             if t in ts:
                 self.plot_it(t)
+                if (not show):
+                    plt.close('all')
                 # print(self.vor[:, int(self.num/2)])
 
         os.chdir('..')
