@@ -4,16 +4,17 @@ import numpy as np
 import os
 
 class Surf:
-    def __init__(self, kind, fac = 0.5, vi = 1, pert = 0.01, num = 128):
+    def __init__(self, kind, fac = 0.5, vi = 1, pert = 0.01, num = 128, rot=False, addinfo=''):
         self.kind = kind # 种类
         self.fac = fac # 初始非零涡度区占比
         self.vi = vi # 初始场强度
         self.pert = pert # 扰动大小
         self.num = num # 分辨率（格点数）
-        self.vor = self.__get_initial_vor()
+        self.vor = self.__get_initial_vor(rot)
         self.laplace, self.laplace_rev = self.__get_spectral_util()
         self.lon = np.delete(np.linspace(0, 2*np.pi, num+1), -1)
         self.lat = np.delete(np.linspace(0, 2*np.pi, num+1), -1)
+        self.additionInfo = addinfo
 
     def __get_spectral_util(self):
         Kmax = self.num//2
@@ -26,6 +27,10 @@ class Surf:
         self.jj = (0+1j)
         ks = np.append(np.linspace(0, Kmax, Kmax+1), -np.linspace(Kmax-1, 1, Kmax-1))
         js = np.append(np.linspace(0, Jmax, Jmax+1), -np.linspace(Jmax-1, 1, Jmax-1))
+        if (self.kind == 'KB' or self.kind == 'PP'):
+            js /= 2
+            if (self.kind == 'PP'):
+                ks /= 2
         self.kjs = np.array(np.meshgrid(js, ks))
         laplace = -(self.kjs[1]**2+self.kjs[0]**2)
         laplace_0 = laplace.copy()
@@ -33,14 +38,17 @@ class Surf:
         laplace_rev = 1/laplace_0
         return laplace, laplace_rev
 
-    def __get_initial_vor(self):
+    def __get_initial_vor(self, rot):
         n_half = self.num//2
         n1 = int(n_half*(1-self.fac))
         n2 = n_half - n1
 
-        vor_lat = np.concatenate([np.zeros(n1), -np.ones(n2), np.ones(n2), np.zeros(n1)])
-        vor_lat *= self.vi
-        vor = np.expand_dims(vor_lat, 1).repeat(self.num, axis=1)
+        vor1d = np.concatenate([np.zeros(n1), -np.ones(n2), np.ones(n2), np.zeros(n1)])
+        vor1d *= self.vi
+        if (not rot):
+            vor = np.expand_dims(vor1d, 1).repeat(self.num, axis=1)
+        else:
+            vor = np.expand_dims(vor1d, 0).repeat(self.num, axis=0)
 
         vor[n_half][n_half] += self.pert
         return vor
@@ -62,7 +70,7 @@ class Surf:
             vor_dbx = np.concatenate([vor_invy, vor], axis=1)
             vor_dbx_rev = np.concatenate([vor_invxy, vor_invx], axis=1)
             vor_temp = np.concatenate([vor_dbx_rev, vor_dbx], axis=0) 
-        elif (self.kind == 'T'):
+        elif (self.kind == 'Torus'):
             vor_temp = vor
         
         f = fft2(vor_temp)
@@ -85,16 +93,16 @@ class Surf:
         return tendency
     
     def goto_folder(self, dt, nu):
-        dirname = "fac="+str(self.fac)+"_dt="+str(dt)+"_nu="+str(nu)+"_pert="+str(self.pert)+"_vi="+str(self.vi)
+        dirname = "fac="+str(self.fac)+"_dt="+str(dt)+"_nu="+str(nu)+"_pert="+str(self.pert)+"_vi="+str(self.vi)+self.additionInfo
         if (dirname not in os.listdir()):
             os.mkdir(dirname)
         os.chdir(dirname)
 
-    def plot_it(self, t):
+    def plot_it(self, t, e=0.1):
         fname = "vorticity_"+str(int(t))+"_seconds_later.png"
         fig, ax = plt.subplots(figsize=(6,4))
 
-        crange = np.linspace(-self.vi, self.vi, 10)
+        crange = np.linspace(-self.vi-e, self.vi+e, 21)
         ax.set_aspect('equal', adjustable='box')
         ax.set_title(fname)
         ax.set_xlabel('longitude')
@@ -123,6 +131,7 @@ class Surf:
             # print(t, t_plot)
             if t in ts:
                 self.plot_it(t)
+                # print(self.vor[:, int(self.num/2)])
 
         os.chdir('..')
         os.chdir('..')
