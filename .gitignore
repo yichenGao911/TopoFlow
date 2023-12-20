@@ -5,6 +5,7 @@ __pycache__/
 
 # figures
 *.png
+*.mp4
 
 # system
 *.DS_Store
