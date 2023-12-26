@@ -20,8 +20,8 @@ def create_video_from_images(image_folder, video_name, fps):
     video.release()
 
 # 使用示例
-image_folder = 'Torus/fac=0.2_dt=0.01_nu=0.0002_pert=0.01_vi=1' # 图片所在文件夹的路径
-video_name = 'output_video.mp4' # 视频输出文件名
-fps = 24 # 视频帧率
+image_folder = 'KB/fac=0.2_dt=0.01_nu=0.0002_pert=0.01_vi=1' # 图片所在文件夹的路径
+video_name = 'KB_output_video.mp4' # 视频输出文件名
+fps = 12 # 视频帧率
 
 create_video_from_images(image_folder, video_name, fps)
